@@ -30,4 +30,6 @@ class ProjectsResource:
     def delete(self, project_id: str) -> Project:
         """Delete a project by ID."""
         data = self._client._delete(f"/project/{project_id}")
+        if isinstance(data, list):
+            data = data[0]
         return Project.from_dict(data)

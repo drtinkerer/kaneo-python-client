@@ -8,3 +8,6 @@ build/
 *.whl
 .coverage
 htmlcov/
+testing.py
+testing-undo.py
+docs/superpowers/

@@ -23,7 +23,12 @@ TASK_DATA = {
 def test_list_tasks(client, httpx_mock: HTTPXMock):
     httpx_mock.add_response(
         url=f"https://cloud.kaneo.app/api/task/tasks/{PROJECT_ID}",
-        json={"tasks": [TASK_DATA]},
+        json={
+            "columns": [
+                {"id": "to-do", "name": "To Do", "tasks": [TASK_DATA]},
+                {"id": "done", "name": "Done", "tasks": []},
+            ]
+        },
     )
     tasks = client.tasks.list(PROJECT_ID)
     assert len(tasks) == 1
@@ -61,28 +66,32 @@ def test_delete_task(client, httpx_mock: HTTPXMock):
 
 def test_update_status(client, httpx_mock: HTTPXMock):
     updated = {**TASK_DATA, "status": "in-progress"}
-    httpx_mock.add_response(url="https://cloud.kaneo.app/api/task/status/task-xyz", json=updated)
+    httpx_mock.add_response(url="https://cloud.kaneo.app/api/task/status/task-xyz", json=TASK_DATA)
+    httpx_mock.add_response(url="https://cloud.kaneo.app/api/task/task-xyz", json=updated)
     task = client.tasks.update_status("task-xyz", "in-progress")
     assert task.status == "in-progress"
 
 
 def test_update_priority(client, httpx_mock: HTTPXMock):
     updated = {**TASK_DATA, "priority": "urgent"}
-    httpx_mock.add_response(url="https://cloud.kaneo.app/api/task/priority/task-xyz", json=updated)
+    httpx_mock.add_response(url="https://cloud.kaneo.app/api/task/priority/task-xyz", json=TASK_DATA)
+    httpx_mock.add_response(url="https://cloud.kaneo.app/api/task/task-xyz", json=updated)
     task = client.tasks.update_priority("task-xyz", "urgent")
     assert task.priority == "urgent"
 
 
 def test_update_title(client, httpx_mock: HTTPXMock):
     updated = {**TASK_DATA, "title": "New title"}
-    httpx_mock.add_response(url="https://cloud.kaneo.app/api/task/title/task-xyz", json=updated)
+    httpx_mock.add_response(url="https://cloud.kaneo.app/api/task/title/task-xyz", json=TASK_DATA)
+    httpx_mock.add_response(url="https://cloud.kaneo.app/api/task/task-xyz", json=updated)
     task = client.tasks.update_title("task-xyz", "New title")
     assert task.title == "New title"
 
 
 def test_update_description(client, httpx_mock: HTTPXMock):
     updated = {**TASK_DATA, "description": "New desc"}
-    httpx_mock.add_response(url="https://cloud.kaneo.app/api/task/description/task-xyz", json=updated)
+    httpx_mock.add_response(url="https://cloud.kaneo.app/api/task/description/task-xyz", json=TASK_DATA)
+    httpx_mock.add_response(url="https://cloud.kaneo.app/api/task/task-xyz", json=updated)
     task = client.tasks.update_description("task-xyz", "New desc")
     assert task.description == "New desc"
 
